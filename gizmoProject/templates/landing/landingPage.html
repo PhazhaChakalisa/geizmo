@@ -1,0 +1,1043 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEIZMO — AI for Education</title>
+    <!-- Crimson Pro (elegant serif) & DM Sans (clean sans) — matching dashboards -->
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 
+            A landing palette that bridges both dashboards:
+            - Student: indigo/violet + amber
+            - Teacher: forest green + sand
+            Unified design system with Crimson Pro + DM Sans
+        */
+        :root {
+            --indigo: #3730a3;
+            --indigo-light: #6366f1;
+            --forest: #1a4d2e;
+            --forest-light: #2d6a4f;
+            --accent-amber: #f59e0b;
+            --accent-sand: #d4a574;
+            --bg-warm: #fafaf8;
+            --bg-card: #ffffff;
+            --text-deep: #1a1a2e;
+            --text-soft: #5a5a6e;
+            --border-soft: #e8e6e0;
+            --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 16px 40px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.08);
+            --gradient-bridge: linear-gradient(145deg, rgba(55,48,163,0.03) 0%, rgba(26,77,46,0.03) 100%);
+            --radius-card: 20px;
+            --radius-btn: 10px;
+        }
+
+        /* ===== DARK MODE ===== */
+        [data-theme="dark"] {
+            --indigo: #818cf8;
+            --indigo-light: #a5b4fc;
+            --forest: #4ade80;
+            --forest-light: #86efac;
+            --accent-amber: #fbbf24;
+            --accent-sand: #f0b77a;
+            --bg-warm: #0d0d1a;
+            --bg-card: #13131f;
+            --text-deep: #e2e8f0;
+            --text-soft: #94a3b8;
+            --border-soft: #1e1e3a;
+        }
+
+        [data-theme="dark"] .bg-ornament {
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(129,140,248,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(74,222,128,0.04) 0%, transparent 45%),
+                radial-gradient(circle at 30% 70%, rgba(251,191,36,0.03) 0%, transparent 30%),
+                radial-gradient(circle at 70% 20%, rgba(240,183,122,0.03) 0%, transparent 35%);
+        }
+
+        [data-theme="dark"] .navbar-wrap {
+            background: rgba(13, 13, 26, 0.95);
+            border-bottom-color: #1e1e3a;
+        }
+
+        [data-theme="dark"] .role-card {
+            background: #13131f;
+            border-color: #1e1e3a;
+        }
+
+        [data-theme="dark"] .role-card.teacher {
+            background: #0d1a14;
+            border-color: #1a3a2e;
+        }
+
+        [data-theme="dark"] .feature-card {
+            background: #13131f;
+            border-color: #1e1e3a;
+        }
+
+        [data-theme="dark"] .testimonial {
+            background: #13131f;
+            border-color: #1e1e3a;
+        }
+
+        [data-theme="dark"] .testimonial.teacher {
+            background: #0d1a14;
+            border-color: #1a3a2e;
+        }
+
+        [data-theme="dark"] .cta-section {
+            background: linear-gradient(135deg, #0a0a1e 0%, #0d1f1a 100%);
+        }
+
+        [data-theme="dark"] .hero-mockup {
+            background: #13131f;
+            border-color: #1e1e3a;
+        }
+
+        [data-theme="dark"] .mockup-card {
+            background: #1e1e3a;
+        }
+
+        [data-theme="dark"] .mockup-bar {
+            background: #1e1e3a;
+        }
+
+        /* Dark mode toggle */
+        .theme-toggle-nav {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+
+        .theme-toggle-nav:hover {
+            border-color: var(--indigo);
+            transform: scale(1.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg-warm);
+            color: var(--text-deep);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* subtle animated background — echoes both dashboards' patterns */
+        .bg-ornament {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(79,70,229,0.03) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(26,77,46,0.03) 0%, transparent 45%),
+                radial-gradient(circle at 30% 70%, rgba(245,158,11,0.02) 0%, transparent 30%),
+                radial-gradient(circle at 70% 20%, rgba(212,165,116,0.02) 0%, transparent 35%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* ===== NAVIGATION ===== */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--text-deep);
+            letter-spacing: 0.5px;
+            text-decoration: none;
+        }
+
+        .logo-mark {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(145deg, #3730a3, #1a4d2e);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Crimson Pro', serif;
+            font-size: 22px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(55,48,163,0.25);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-soft);
+            font-weight: 500;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--indigo);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 24px;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            gap: 8px;
+            background: transparent;
+        }
+
+        .btn-student {
+            background: white;
+            color: var(--indigo);
+            border: 2px solid rgba(79,70,229,0.2);
+        }
+
+        .btn-student:hover {
+            background: var(--indigo);
+            color: white;
+            border-color: var(--indigo);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(79,70,229,0.2);
+        }
+
+        .btn-teacher {
+            background: white;
+            color: var(--forest);
+            border: 2px solid rgba(26,77,46,0.2);
+        }
+
+        .btn-teacher:hover {
+            background: var(--forest);
+            color: white;
+            border-color: var(--forest);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(26,77,46,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, var(--indigo), var(--forest));
+            color: white;
+            padding: 14px 36px;
+            border: none;
+            box-shadow: 0 8px 24px rgba(55,48,163,0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 32px rgba(26,77,46,0.25);
+        }
+
+        /* ===== NAVBAR WRAP — sticky, glass ===== */
+        .navbar-wrap {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(250, 250, 248, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-soft);
+            transition: background 0.3s ease;
+        }
+
+        .btn-student {
+            background: var(--bg-card);
+            color: var(--indigo);
+            border: 2px solid rgba(55,48,163,0.15);
+        }
+
+        .btn-student:hover {
+            background: var(--indigo);
+            color: white;
+            border-color: var(--indigo);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(55,48,163,0.2);
+        }
+
+        .btn-teacher {
+            background: var(--bg-card);
+            color: var(--forest);
+            border: 2px solid rgba(26,77,46,0.15);
+        }
+
+        .btn-teacher:hover {
+            background: var(--forest);
+            color: white;
+            border-color: var(--forest);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26,77,46,0.2);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            padding: 60px 0 80px;
+        }
+
+        .hero-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 60px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            color: var(--text-deep);
+            margin-bottom: 24px;
+        }
+
+        .hero-gradient-text {
+            background: linear-gradient(145deg, var(--indigo), var(--forest));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-soft);
+            max-width: 520px;
+            margin-bottom: 36px;
+            line-height: 1.6;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .hero-visual {
+            position: relative;
+        }
+
+        .dashboard-mockup {
+            background: var(--bg-card);
+            border-radius: 32px;
+            padding: 24px 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(4px);
+            transform: perspective(800px) rotateY(-4deg) rotateX(2deg);
+            transition: transform 0.4s ease;
+        }
+
+        .dashboard-mockup:hover {
+            transform: perspective(800px) rotateY(-2deg) rotateX(1deg) translateY(-6px);
+        }
+
+        .mockup-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .mockup-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--indigo-light);
+            opacity: 0.6;
+        }
+
+        .mockup-dot.green {
+            background: var(--forest-light);
+        }
+
+        .mockup-bar {
+            height: 40px;
+            background: linear-gradient(90deg, var(--indigo-light) 0%, var(--forest-light) 80%);
+            border-radius: 20px;
+            width: 80%;
+            opacity: 0.2;
+            margin-bottom: 16px;
+        }
+
+        .mockup-cards {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .mockup-card {
+            background: var(--bg-warm);
+            border-radius: 20px;
+            padding: 20px;
+            flex: 1;
+            min-width: 140px;
+            border: 1px solid var(--border-soft);
+        }
+
+        .mockup-card span {
+            display: block;
+            width: 30px;
+            height: 30px;
+            background: var(--indigo);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            opacity: 0.15;
+        }
+
+        .mockup-card.green span {
+            background: var(--forest);
+        }
+
+        /* ===== ROLE SPLIT ===== */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-eyebrow {
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-sand);
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--text-deep);
+            margin-bottom: 20px;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 80px;
+        }
+
+        .role-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-card);
+            padding: 48px 40px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            border: 1px solid var(--border-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--indigo), var(--accent-amber));
+            opacity: 0.6;
+        }
+
+        .role-card.teacher::before {
+            background: linear-gradient(90deg, var(--forest), var(--accent-sand));
+        }
+
+        .role-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .role-icon {
+            font-size: 56px;
+            margin-bottom: 24px;
+        }
+
+        .role-name {
+            font-family: 'Crimson Pro', serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-deep);
+        }
+
+        .role-desc {
+            color: var(--text-soft);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            color: var(--text-soft);
+            font-weight: 500;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            font-weight: 700;
+            color: white;
+            background: var(--indigo);
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .teacher .feature-list li::before {
+            background: var(--forest);
+        }
+
+        .role-link {
+            font-weight: 700;
+            color: var(--indigo);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid transparent;
+            transition: border 0.2s;
+            padding-bottom: 4px;
+        }
+
+        .role-link:hover {
+            border-bottom-color: var(--indigo);
+        }
+
+        .teacher .role-link {
+            color: var(--forest);
+        }
+        .teacher .role-link:hover {
+            border-bottom-color: var(--forest);
+        }
+
+        /* ===== FEATURES ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin: 80px 0;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 36px 28px;
+            border: 1px solid var(--border-soft);
+            transition: all 0.25s;
+        }
+
+        .feature-card:hover {
+            background: white;
+            border-color: transparent;
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            background: linear-gradient(145deg, rgba(55,48,163,0.08), rgba(26,77,46,0.08));
+            width: 68px;
+            height: 68px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            margin-bottom: 28px;
+            color: var(--indigo);
+        }
+
+        .feature-title {
+            font-size: 22px;
+            font-weight: 700;
+            font-family: 'Fraunces', serif;
+            margin-bottom: 16px;
+        }
+
+        .feature-text {
+            color: var(--text-soft);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* ===== TESTIMONIALS ===== */
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            margin: 60px 0 100px;
+        }
+
+        .testimonial {
+            background: var(--bg-card);
+            border-radius: 32px;
+            padding: 40px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-soft);
+            position: relative;
+        }
+
+        .testimonial-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, var(--indigo-light), var(--indigo));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        .testimonial.teacher .testimonial-avatar {
+            background: linear-gradient(145deg, var(--forest-light), var(--forest));
+        }
+
+        .testimonial-quote {
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--text-deep);
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+            color: var(--text-deep);
+        }
+
+        .testimonial-role {
+            color: var(--text-soft);
+            font-size: 14px;
+        }
+
+        .cta-sub {
+            font-size: 18px;
+            color: var(--text-soft);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            border-top: 1px solid var(--border-soft);
+
+        .cta-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 44px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .cta-section {
+            background: linear-gradient(145deg, rgba(55,48,163,0.03), rgba(26,77,46,0.03));
+            border-radius: 24px;
+            padding: 80px 60px;
+            text-align: center;
+            margin: 60px 0 80px;
+            border: 1px solid var(--border-soft);
+        }
+            padding: 48px 0;
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            color: var(--text-soft);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: var(--text-soft);
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            color: var(--indigo);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-subtitle {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-cta {
+                justify-content: center;
+            }
+            .hero-visual {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+            }
+            .role-grid, .features-grid, .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-title {
+                font-size: 42px;
+            }
+            .section-title {
+                font-size: 32px;
+            }
+            .cta-section {
+                padding: 60px 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 20px;
+            }
+            .nav-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* subtle animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .dashboard-mockup {
+            animation: float 8s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-ornament"></div>
+    
+    <!-- Sticky Navigation Wrap -->
+    <div class="navbar-wrap">
+    <div class="container">
+        <!-- Navigation — two roles, one platform -->
+        <nav class="navbar">
+            <a href="/" class="logo">
+                <div class="logo-mark">G</div>
+                <span>GEIZMO</span>
+            </a>
+            <div class="nav-links">
+                <a href="/#home">Home</a>
+                <a href="/#features">Features</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/#contact">Contact</a>
+                <div class="nav-buttons">
+                    <button class="theme-toggle-nav" onclick="toggleTheme()" id="themeToggleBtn" title="Toggle dark mode">🌙</button>
+                    <a href="/signup/student/" class="btn btn-student">👤 Student</a>
+                    <a href="/signup/lecturer/" class="btn btn-teacher">👥 Teacher</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    </div>
+
+    <div class="container">
+
+        <!-- Hero — bridging both dashboards -->
+        <div class="hero">
+            <div>
+                <h1 class="hero-title">
+                    <span class="hero-gradient-text">Practice, feedback,</span><br>mastery — for everyone.
+                </h1>
+                <p class="hero-subtitle">
+                    GEIZMO unites students and educators in an AI‑powered learning loop. 
+                    Upload answers, receive instant feedback, and grow — from both sides of the desk.
+                </p>
+                <div class="hero-cta">
+                    <a href="/signup/student/" class="btn btn-primary">Get started — it’s free →</a>
+                    <a href="/#features" class="btn btn-student">Watch demo</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="dashboard-mockup">
+                    <div class="mockup-row">
+                        <div class="mockup-dot"></div>
+                        <div class="mockup-dot green"></div>
+                        <div style="flex:1"></div>
+                        <span style="color:var(--text-soft); font-size:13px; background:rgba(0,0,0,0.02); padding:6px 12px; border-radius:50px;">✨ Sarah's dashboard</span>
+                    </div>
+                    <div class="mockup-bar"></div>
+                    <div class="mockup-cards">
+                        <div class="mockup-card">
+                            <span></span>
+                            <div style="height:8px; width:80%; background:var(--indigo-light); opacity:0.2; border-radius:6px; margin-bottom:12px;"></div>
+                            <div style="height:8px; width:60%; background:var(--forest-light); opacity:0.2; border-radius:6px;"></div>
+                            <div style="display:flex; gap:6px; margin-top:16px;">
+                                <div style="background:var(--indigo); width:28px; height:28px; border-radius:8px; opacity:0.2;"></div>
+                                <div style="background:var(--forest); width:28px; height:28px; border-radius:8px; opacity:0.2;"></div>
+                            </div>
+                        </div>
+                        <div class="mockup-card green">
+                            <span style="background:var(--forest);"></span>
+                            <div style="height:8px; width:90%; background:var(--forest-light); opacity:0.2; border-radius:6px; margin-bottom:12px;"></div>
+                            <div style="height:8px; width:70%; background:var(--indigo-light); opacity:0.2; border-radius:6px;"></div>
+                            <div style="font-size:13px; margin-top:16px; color:var(--forest);">👩‍🏫 12 pending</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:20px;">
+                        <span style="font-size:13px; color:var(--indigo); font-weight:600;">📈 +18% this week</span>
+                        <span style="font-size:13px; color:var(--forest); font-weight:600;">📝 7-day streak</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two worlds, one GIZMO (student & teacher cards) -->
+        <div class="section-header">
+            <div class="section-eyebrow">Designed for both</div>
+            <h2 class="section-title">Your role, your dashboard.<br>One seamless intelligence.</h2>
+        </div>
+
+        <div class="role-grid">
+            <!-- Student card — indigo/amber vibe -->
+            <div class="role-card">
+                <div class="role-icon">📘</div>
+                <div class="role-name">For Students</div>
+                <div class="role-desc">
+                    Turn past papers into progress. Upload handwritten or typed answers, get AI feedback in seconds, and close gaps faster.
+                </div>
+                <ul class="feature-list">
+                    <li>Instant AI grading & suggestions</li>
+                    <li>Personalized resource recommendations</li>
+                    <li>Streak tracking & achievements</li>
+                    <li>All courses, one dashboard</li>
+                </ul>
+                <a href="/signup/student/" class="role-link">
+                    Explore student dashboard → 
+                </a>
+            </div>
+            <!-- Teacher card — forest/sand vibe -->
+            <div class="role-card teacher">
+                <div class="role-icon">📚</div>
+                <div class="role-name">For Educators</div>
+                <div class="role-desc">
+                    Publish past papers, upload model answers, and let AI do the first pass. Verify, give feedback, and focus on what matters.
+                </div>
+                <ul class="feature-list">
+                    <li>Auto‑grading with your criteria</li>
+                    <li>Student verification & course management</li>
+                    <li>Analytics & class‑wide insights</li>
+                    <li>Resource library (textbooks, videos)</li>
+                </ul>
+                <a href="/signup/lecturer/" class="role-link">
+                    Explore teacher dashboard → 
+                </a>
+            </div>
+        </div>
+
+        <!-- Unified features – no separation, both benefit -->
+        <div class="section-header">
+            <div class="section-eyebrow">Intelligent, beautiful, useful</div>
+            <h2 class="section-title">Features that connect<br>learning & teaching.</h2>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">AI that understands</div>
+                <div class="feature-text">Trained on your curriculum, model answers, and marking schemes. Consistent, fair, and instant feedback.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">From paper to score</div>
+                <div class="feature-text">Handwritten, digital, or screenshot — our AI reads everything. Students upload, teachers relax.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Shared intelligence</div>
+                <div class="feature-text">Students see growth; teachers see patterns. Both work from the same data, towards the same goals.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📖</div>
+                <div class="feature-title">Resource ecosystem</div>
+                <div class="feature-text">Textbooks, video tutorials, past papers — everything in one place, recommended by AI based on performance.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <div class="feature-title">Mastery, not repetition</div>
+                <div class="feature-text">Intelligent practice suggestions. Stop drilling what you know; focus on what's next.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <div class="feature-title">Verification & trust</div>
+                <div class="feature-text">Teachers control enrollment. Students get secure, private access to courses and materials.</div>
+            </div>
+        </div>
+
+        <!-- Testimonials — one student, one teacher (harmony) -->
+        <div class="section-header">
+            <div class="section-eyebrow">From both sides</div>
+            <h2 class="section-title">Trusted by learners & faculty.</h2>
+        </div>
+
+        <div class="testimonial-grid">
+            <div class="testimonial">
+                <div class="testimonial-avatar">SJ</div>
+                <div class="testimonial-quote">“I used to wait days for feedback. Now I get it instantly. GEIZMO shows me exactly where I lost marks and how to improve. My streak is at 21 days!”</div>
+                <div class="testimonial-author">Sarah Johnson</div>
+                <div class="testimonial-role">CS student, 3rd year</div>
+            </div>
+            <div class="testimonial teacher">
+                <div class="testimonial-avatar">DA</div>
+                <div class="testimonial-quote">“I upload a past paper and model answer. The AI grades 200 submissions in minutes. I only review borderline cases. My weekends are back.”</div>
+                <div class="testimonial-author">Dr. Anderson</div>
+                <div class="testimonial-role">Senior Lecturer, CS</div>
+            </div>
+        </div>
+
+        <!-- Final CTA — both audiences -->
+        <div class="cta-section">
+            <h2 class="cta-title">Begin your GEIZMO journey</h2>
+            <p class="cta-sub">Whether you’re preparing for finals or designing the next great course — our AI is ready.</p>
+            <div class="cta-buttons">
+                <a href="/signup/student/" class="btn btn-primary" style="background: var(--indigo);">I'm a student →</a>
+                <a href="/signup/lecturer/" class="btn btn-primary" style="background: var(--forest);">I'm an educator →</a>
+            </div>
+            <p style="margin-top: 32px; color: var(--text-soft); font-size: 14px;">No credit card required. Free for individual use.</p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="logo-mark" style="width: 36px; height: 36px; font-size: 20px;">G</div>
+                <span style="font-weight: 600;">GEIZMO © 2025</span>
+            </div>
+            <div class="footer-links">
+                <a href="/#privacy">Privacy</a>
+                <a href="/#terms">Terms</a>
+                <a href="/#contact">Contact</a>
+                <a href="/#status">Status</a>
+            </div>
+        </footer>
+
+    </div> <!-- container end -->
+
+    <script>
+        // ===== DARK MODE =====
+        function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('gizmo-theme', newTheme);
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) btn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Load saved theme
+        (function() {
+            const saved = localStorage.getItem('gizmo-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
+        })();
+
+        // Gentle fade-in observer (same feeling as dashboards)
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.role-card, .feature-card, .testimonial, .hero > *');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+            fadeElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.7s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1)';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

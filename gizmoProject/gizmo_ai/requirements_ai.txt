@@ -1,0 +1,38 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  GIZMO AI Requirements
+#  Install with: pip install -r requirements_ai.txt
+#
+#  Tier 1 — MUST HAVE (core AI)
+# ─────────────────────────────────────────────────────────────────────────────
+sentence-transformers>=2.2.0       # Sentence-BERT: semantic similarity (all-MiniLM-L6-v2)
+scikit-learn>=1.3.0                # TF-IDF fallback + evaluation metrics
+numpy>=1.24.0                      # numerical ops
+scipy>=1.11.0                      # cosine distance, stats
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Tier 2 — FILE EXTRACTION (needed to read student uploads)
+# ─────────────────────────────────────────────────────────────────────────────
+pdfminer.six>=20221105             # extract text from PDF (best for text-based PDFs)
+pypdf>=3.0.0                       # fallback PDF reader
+python-docx>=0.8.11                # extract text from .docx files
+python-pptx>=0.6.21                # extract text from .pptx files
+Pillow>=10.0.0                     # image handling (for OCR path)
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Tier 3 — OCR (needed ONLY for scanned PDFs / handwritten answers)
+#  Also requires: Tesseract OCR installed on the OS
+#  Windows: https://github.com/UB-Mannheim/tesseract/wiki
+#  Ubuntu:  sudo apt install tesseract-ocr
+# ─────────────────────────────────────────────────────────────────────────────
+pytesseract>=0.3.10                # Python wrapper for Tesseract OCR
+pdf2image>=1.16.0                  # convert scanned PDF pages to images for OCR
+# poppler-utils must also be installed on the OS:
+#   Windows: https://github.com/oschwartz10612/poppler-windows/releases
+#   Ubuntu:  sudo apt install poppler-utils
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Tier 4 — TRAINING / EVALUATION (only needed when fine-tuning the model)
+# ─────────────────────────────────────────────────────────────────────────────
+torch>=2.0.0                       # required by sentence-transformers
+transformers>=4.30.0               # Hugging Face: access BERT/Sentence-BERT models
+datasets>=2.14.0                   # dataset handling for fine-tuning

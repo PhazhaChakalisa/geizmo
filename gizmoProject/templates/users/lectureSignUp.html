@@ -1,0 +1,1338 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIZMO — Lecturer Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            if (localStorage.getItem('gizmo-theme') === 'dark')
+                document.documentElement.setAttribute('data-theme', 'dark');
+        })();
+    </script>
+    <style>
+        :root {
+            --teacher: #0f2919;
+            --teacher-mid: #1a4d2e;
+            --teacher-light: #2d6a4f;
+            --accent: #d4a574;
+            --accent-light: #e8c4a0;
+            --success: #059669;
+            --danger: #dc2626;
+            --bg: #fafaf8;
+            --bg-card: #ffffff;
+            --text: #1a1a1a;
+            --text-soft: #666666;
+            --text-muted: #999999;
+            --border: #e5e5e0;
+            --shadow: 0 8px 32px rgba(26,77,46,0.08);
+            --shadow-lg: 0 24px 64px rgba(26,77,46,0.14);
+        }
+        [data-theme="dark"] {
+            --bg: #0a100c;
+            --bg-card: #0f1a12;
+            --text: #e6edf3;
+            --text-soft: #8b949e;
+            --text-muted: #6e7681;
+            --border: #1e3a2e;
+            --shadow: 0 8px 32px rgba(0,0,0,0.4);
+            --shadow-lg: 0 24px 64px rgba(0,0,0,0.5);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ── LEFT PANEL ── */
+        .panel-left {
+            width: 42%;
+            min-height: 100vh;
+            background: linear-gradient(160deg, #0a1a0d 0%, #1a4d2e 50%, #2d6a4f 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 52px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .panel-left::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 360px; height: 360px;
+            background: radial-gradient(circle, rgba(212,165,116,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .panel-left::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -60px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(45,106,79,0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        /* Decorative grid dots */
+        .dot-grid {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+        }
+
+        .panel-logo {
+            font-family: 'Crimson Pro', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+            color: var(--teacher);
+            font-size: 20px;
+        }
+
+        .panel-content {
+            position: relative;
+            z-index: 2;
+        }
+        .panel-eyebrow {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+        .panel-headline {
+            font-family: 'Crimson Pro', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        .panel-sub {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 340px;
+        }
+        .panel-perks {
+            margin-top: 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .perk {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: rgba(255,255,255,0.85);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .perk-icon {
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .panel-bottom {
+            position: relative;
+            z-index: 2;
+        }
+        .panel-bottom p {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+        }
+
+        /* ── RIGHT PANEL ── */
+        .panel-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 64px;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .theme-btn {
+            position: absolute;
+            top: 28px; right: 28px;
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            cursor: pointer;
+            font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s;
+            color: var(--text);
+        }
+        .theme-btn:hover { border-color: var(--teacher-light); transform: scale(1.05); }
+
+        .form-wrap {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .step { display: none; animation: stepIn 0.4s ease; }
+        .step.active { display: block; }
+
+        @keyframes stepIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-indicator {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 36px;
+        }
+        .step-dot {
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            flex: 1;
+            transition: background 0.4s;
+        }
+        .step-dot.done { background: var(--teacher-mid); }
+        .step-dot.active { background: var(--accent); }
+
+        .form-heading {
+            font-family: 'Crimson Pro', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .form-sub {
+            color: var(--text-soft);
+            font-size: 15px;
+            margin-bottom: 36px;
+            line-height: 1.6;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+        .field-wrap { position: relative; }
+        .field-icon {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            pointer-events: none;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        select, textarea {
+            width: 100%;
+            padding: 13px 16px 13px 42px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--bg-card);
+            transition: all 0.25s;
+            outline: none;
+            appearance: none;
+        }
+        textarea {
+            padding: 13px 16px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--teacher-light);
+            box-shadow: 0 0 0 3px rgba(26,77,46,0.12);
+        }
+        .field-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+        .field-error {
+            font-size: 12px;
+            color: var(--danger);
+            margin-top: 6px;
+            display: none;
+        }
+        .field-error.show { display: block; }
+
+        /* OTP */
+        .otp-wrap {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 8px 0 24px;
+        }
+        .otp-input {
+            width: 60px !important;
+            height: 64px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Crimson Pro', serif;
+            padding: 0 !important;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            transition: all 0.25s;
+        }
+        .otp-input:focus {
+            border-color: var(--teacher-light);
+            box-shadow: 0 0 0 3px rgba(26,77,46,0.12);
+            transform: scale(1.05);
+        }
+        .otp-input.filled {
+            border-color: var(--teacher-mid);
+            background: rgba(26,77,46,0.05);
+        }
+        .otp-timer {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-soft);
+            margin-bottom: 8px;
+        }
+        .otp-timer span { color: var(--teacher-mid); font-weight: 600; }
+        .resend-link {
+            display: block;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        .resend-link a { color: var(--teacher-mid); font-weight: 600; cursor: pointer; }
+
+        /* Course grid for teaching */
+        .course-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+            max-height: 360px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .course-grid::-webkit-scrollbar { width: 4px; }
+        .course-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        .course-card {
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+            background: var(--bg-card);
+        }
+        .course-card:hover {
+            border-color: var(--teacher-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26,77,46,0.1);
+        }
+        .course-card.selected {
+            border-color: var(--teacher-mid);
+            background: rgba(26,77,46,0.05);
+        }
+        .course-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 10px; right: 12px;
+            width: 20px; height: 20px;
+            background: var(--teacher-mid);
+            color: white;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+        }
+        .course-code {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--teacher-mid);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .course-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+            line-height: 1.3;
+        }
+        .course-dept {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .course-count {
+            font-size: 12px;
+            color: var(--text-soft);
+            margin-bottom: 16px;
+        }
+        .course-count strong { color: var(--teacher-mid); }
+
+        /* Password strength */
+        .pw-strength { display: flex; gap: 4px; margin-top: 8px; }
+        .pw-bar {
+            height: 3px; flex: 1;
+            border-radius: 2px;
+            background: var(--border);
+            transition: background 0.3s;
+        }
+        .pw-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Show password toggle */
+        .pw-toggle {
+            position: absolute;
+            right: 14px; top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-muted);
+            padding: 4px;
+            transition: color 0.2s;
+            z-index: 2;
+        }
+        .pw-toggle:hover { color: var(--teacher-mid); }
+
+        /* Country code select */
+        .phone-row { display: flex; gap: 10px; align-items: flex-start; }
+        .phone-row .field-wrap:first-child { flex-shrink: 0; width: 160px; }
+        .phone-row .field-wrap:last-child { flex: 1; }
+        .phone-row select { padding-left: 42px; }
+
+        /* Manual course add */
+        .course-add-form {
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .course-add-form .field-row { margin-bottom: 12px; }
+        .course-add-form .field { margin-bottom: 0; }
+        .added-courses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .added-course-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-card);
+            animation: stepIn 0.3s ease;
+        }
+        .added-course-item.confirmed {
+            border-color: var(--teacher-mid);
+            background: rgba(26,77,46,0.05);
+        }
+        .added-course-info { flex: 1; }
+        .added-course-code {
+            font-size: 11px; font-weight: 700;
+            color: var(--teacher-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .added-course-name { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 2px; }
+        .delete-course-btn {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .delete-course-btn:hover { background: rgba(220,38,38,0.08); border-color: var(--danger); }
+        .add-course-btn {
+            width: 100%;
+            padding: 11px;
+            border-radius: 10px;
+            border: 1.5px dashed var(--teacher-light);
+            background: transparent;
+            color: var(--teacher-mid);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-bottom: 16px;
+        }
+        .add-course-btn:hover { background: rgba(26,77,46,0.05); }
+
+        /* Title selector */
+        .title-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .title-pill {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-soft);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .title-pill:hover { border-color: var(--teacher-light); }
+        .title-pill.selected {
+            border-color: var(--teacher-mid);
+            background: rgba(26,77,46,0.08);
+            color: var(--teacher-mid);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--teacher), var(--teacher-mid));
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(26,77,46,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26,77,46,0.35);
+        }
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 12px;
+        }
+        .btn-secondary:hover { border-color: var(--teacher-light); color: var(--teacher-mid); }
+
+        .btn-row {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 12px;
+            align-items: center;
+        }
+        .btn-back {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-soft);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-back:hover { border-color: var(--teacher-light); color: var(--teacher-mid); }
+
+        .login-link {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--text-soft);
+        }
+        .login-link a {
+            color: var(--teacher-mid);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-link a:hover { text-decoration: underline; }
+
+        /* Role badge */
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(26,77,46,0.08);
+            color: var(--teacher-mid);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        /* Verification pending banner */
+        .pending-banner {
+            background: rgba(212,165,116,0.12);
+            border: 1px solid rgba(212,165,116,0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--text-soft);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .pending-banner .icon { font-size: 18px; flex-shrink: 0; }
+
+        /* Success */
+        .success-wrap {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .success-icon {
+            width: 88px; height: 88px;
+            background: linear-gradient(135deg, rgba(5,150,105,0.1), rgba(5,150,105,0.2));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 24px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 900px) {
+            .panel-left { display: none; }
+            .panel-right { padding: 40px 28px; }
+        }
+        @media (max-width: 540px) {
+            .field-row { grid-template-columns: 1fr; }
+            .course-grid { grid-template-columns: 1fr; }
+            .otp-input { width: 48px !important; height: 54px; font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="panel-left">
+    <div class="dot-grid"></div>
+
+    <a href="/" class="panel-logo">
+        <div class="logo-icon">G</div>
+        GIZMO
+    </a>
+
+    <div class="panel-content">
+        <div class="panel-eyebrow">Educator Portal</div>
+        <h1 class="panel-headline">Teach smarter,<br>grade faster,<br>impact more.</h1>
+        <p class="panel-sub">Upload past papers, set model answers, and let AI do the heavy lifting. Focus on what matters — your students.</p>
+        <div class="panel-perks">
+            <div class="perk"><div class="perk-icon">🤖</div>AI auto-grades all submissions</div>
+            <div class="perk"><div class="perk-icon">📊</div>Class-wide analytics & insights</div>
+            <div class="perk"><div class="perk-icon">✅</div>Student verification & management</div>
+            <div class="perk"><div class="perk-icon">📚</div>Resource library — textbooks & materials</div>
+        </div>
+    </div>
+
+    <div class="panel-bottom">
+        <p>Already registered? <strong><a href="/login/lecturer/" style="color:var(--accent);text-decoration:none;">Sign in →</a></strong></p>
+    </div>
+</div>
+
+<div class="panel-right">
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+
+    <div class="form-wrap">
+
+        <!-- Step 1 — Personal Info -->
+        <div class="step active" id="step1">
+            <div class="step-indicator">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+            <div class="role-badge">👩‍🏫 Educator Registration</div>
+            <h2 class="form-heading">Create your account</h2>
+            <p class="form-sub">Step 1 of 4 — Professional details</p>
+
+            <div class="field">
+                <label>Title</label>
+                <div class="title-pills" id="titlePills">
+                    <button class="title-pill" onclick="selectTitle(this,'Dr.')">Dr.</button>
+                    <button class="title-pill" onclick="selectTitle(this,'Prof.')">Prof.</button>
+                    <button class="title-pill" onclick="selectTitle(this,'Mr.')">Mr.</button>
+                    <button class="title-pill" onclick="selectTitle(this,'Mrs.')">Mrs.</button>
+                    <button class="title-pill" onclick="selectTitle(this,'Ms.')">Ms.</button>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label>First Name</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">👤</span>
+                        <input type="text" id="firstName" placeholder="Sarah">
+                    </div>
+                    <div class="field-error" id="err-firstName">Required</div>
+                </div>
+                <div class="field">
+                    <label>Last Name</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">👤</span>
+                        <input type="text" id="lastName" placeholder="Anderson">
+                    </div>
+                    <div class="field-error" id="err-lastName">Required</div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Institutional Email</label>
+                <div class="field-wrap">
+                    <span class="field-icon">✉️</span>
+                    <input type="email" id="email" placeholder="s.anderson@university.edu">
+                </div>
+                <div class="field-hint">Must be your official university/institution email</div>
+                <div class="field-error" id="err-email">Please enter a valid email</div>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label>Department</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">🏛️</span>
+                        <select id="department">
+                            <option value="">Select dept.</option>
+                            <option>Computer Science</option>
+                            <option>Engineering</option>
+                            <option>Mathematics</option>
+                            <option>Physics</option>
+                            <option>Business</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="field-error" id="err-department">Required</div>
+                </div>
+                <div class="field">
+                    <label>Position</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">🎓</span>
+                        <select id="position">
+                            <option value="">Select position</option>
+                            <option>Lecturer</option>
+                            <option>Senior Lecturer</option>
+                            <option>Associate Professor</option>
+                            <option>Professor</option>
+                            <option>Teaching Assistant</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Staff / Employee ID</label>
+                <div class="field-wrap">
+                    <span class="field-icon">🪪</span>
+                    <input type="text" id="staffId" placeholder="STF-XXXX">
+                </div>
+                <div class="field-hint">Used to verify your identity with the institution</div>
+                <div class="field-error" id="err-staffId">Required</div>
+            </div>
+
+            <button class="btn-primary" onclick="goToStep2()">Continue →</button>
+            <div class="login-link">Already registered? <a href="/login/lecturer/">Sign in to your account</a></div>
+        </div>
+
+        <!-- Step 2 — Security -->
+        <div class="step" id="step2">
+            <div class="step-indicator">
+                <div class="step-dot done"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+            <div class="role-badge">🔒 Security</div>
+            <h2 class="form-heading">Secure your account</h2>
+            <p class="form-sub">Step 2 of 4 — Create a strong password</p>
+
+            <div class="field">
+                <label>Password</label>
+                <div class="field-wrap">
+                    <span class="field-icon">🔑</span>
+                    <input type="password" id="password" placeholder="Minimum 8 characters" oninput="checkStrength(this.value)">
+                    <button type="button" class="pw-toggle" onclick="togglePw('password','eyePw1')" id="eyePw1">👁️</button>
+                </div>
+                <div class="pw-strength">
+                    <div class="pw-bar" id="pb1"></div>
+                    <div class="pw-bar" id="pb2"></div>
+                    <div class="pw-bar" id="pb3"></div>
+                    <div class="pw-bar" id="pb4"></div>
+                </div>
+                <div class="pw-label" id="pw-label">Enter a password</div>
+                <div class="field-error" id="err-password">Password must be at least 8 characters</div>
+            </div>
+
+            <div class="field">
+                <label>Confirm Password</label>
+                <div class="field-wrap">
+                    <span class="field-icon">🔑</span>
+                    <input type="password" id="confirmPassword" placeholder="Repeat your password">
+                    <button type="button" class="pw-toggle" onclick="togglePw('confirmPassword','eyePw2')" id="eyePw2">👁️</button>
+                </div>
+                <div class="field-error" id="err-confirm">Passwords don't match</div>
+            </div>
+
+            <div class="field">
+                <label>Phone Number <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
+                <div class="phone-row">
+                    <div class="field-wrap">
+                        <span class="field-icon">🌍</span>
+                        <select id="countryCode">
+                            <option value="+267">🇧🇼 Botswana (+267)</option>
+                            <option value="+27">🇿🇦 South Africa (+27)</option>
+                            <option value="+263">🇿🇼 Zimbabwe (+263)</option>
+                            <option value="+260">🇿🇲 Zambia (+260)</option>
+                            <option value="+264">🇳🇦 Namibia (+264)</option>
+                            <option value="+258">🇲🇿 Mozambique (+258)</option>
+                            <option value="+254">🇰🇪 Kenya (+254)</option>
+                            <option value="+255">🇹🇿 Tanzania (+255)</option>
+                            <option value="+256">🇺🇬 Uganda (+256)</option>
+                            <option value="+234">🇳🇬 Nigeria (+234)</option>
+                            <option value="+233">🇬🇭 Ghana (+233)</option>
+                            <option value="+251">🇪🇹 Ethiopia (+251)</option>
+                            <option value="+212">🇲🇦 Morocco (+212)</option>
+                            <option value="+20">🇪🇬 Egypt (+20)</option>
+                            <option value="+1">🇺🇸 USA (+1)</option>
+                            <option value="+1">🇨🇦 Canada (+1)</option>
+                            <option value="+44">🇬🇧 UK (+44)</option>
+                            <option value="+49">🇩🇪 Germany (+49)</option>
+                            <option value="+33">🇫🇷 France (+33)</option>
+                            <option value="+91">🇮🇳 India (+91)</option>
+                            <option value="+86">🇨🇳 China (+86)</option>
+                            <option value="+81">🇯🇵 Japan (+81)</option>
+                            <option value="+61">🇦🇺 Australia (+61)</option>
+                            <option value="+55">🇧🇷 Brazil (+55)</option>
+                            <option value="+52">🇲🇽 Mexico (+52)</option>
+                        </select>
+                    </div>
+                    <div class="field-wrap" style="flex:1;">
+                        <span class="field-icon">📱</span>
+                        <input type="tel" id="phone" placeholder="7X XXX XXXX" style="padding-left:42px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Brief Bio <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
+                <textarea id="bio" placeholder="A short description visible to your students..."></textarea>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-back" onclick="goBack(1)">←</button>
+                <button class="btn-primary" onclick="goToStep3()">Send Verification Code →</button>
+            </div>
+        </div>
+
+        <!-- Step 3 — OTP -->
+        <div class="step" id="step3">
+            <div class="step-indicator">
+                <div class="step-dot done"></div>
+                <div class="step-dot done"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+            </div>
+            <div class="role-badge">📧 Email Verification</div>
+            <h2 class="form-heading">Verify your email</h2>
+            <p class="form-sub" id="otpSentTo">Step 3 of 4 — We sent a 6-digit code to your institutional email</p>
+
+            <div class="pending-banner">
+                <span class="icon">ℹ️</span>
+                <span>Lecturer accounts undergo additional institutional verification after registration. You'll receive an approval confirmation within 24 hours.</span>
+            </div>
+
+            <div class="otp-wrap">
+                <input class="otp-input" type="text" maxlength="1" id="otp0" oninput="otpMove(this,1)" onkeydown="otpBack(event,this,null)">
+                <input class="otp-input" type="text" maxlength="1" id="otp1" oninput="otpMove(this,2)" onkeydown="otpBack(event,this,0)">
+                <input class="otp-input" type="text" maxlength="1" id="otp2" oninput="otpMove(this,3)" onkeydown="otpBack(event,this,1)">
+                <input class="otp-input" type="text" maxlength="1" id="otp3" oninput="otpMove(this,4)" onkeydown="otpBack(event,this,2)">
+                <input class="otp-input" type="text" maxlength="1" id="otp4" oninput="otpMove(this,5)" onkeydown="otpBack(event,this,3)">
+                <input class="otp-input" type="text" maxlength="1" id="otp5" oninput="otpMove(this,null)" onkeydown="otpBack(event,this,4)">
+            </div>
+            <div class="field-error" id="err-otp" style="text-align:center;margin-bottom:12px;">Invalid code. Please try again.</div>
+
+            <div class="otp-timer">Code expires in <span id="timerDisplay">10:00</span></div>
+            <div class="resend-link">Didn't receive it? <a onclick="resendOTP()">Resend code</a></div>
+
+            <div class="btn-row">
+                <button class="btn-back" onclick="goBack(2)">←</button>
+                <button class="btn-primary" onclick="verifyOTP()">Verify & Continue →</button>
+            </div>
+        </div>
+
+        <!-- Step 4 — Course Entry -->
+        <div class="step" id="step4">
+            <div class="step-indicator">
+                <div class="step-dot done"></div>
+                <div class="step-dot done"></div>
+                <div class="step-dot done"></div>
+                <div class="step-dot active"></div>
+            </div>
+            <div class="role-badge">📚 Teaching Assignment</div>
+            <h2 class="form-heading">Add your courses</h2>
+            <p class="form-sub">Step 4 of 4 — Enter the courses you'll be teaching this semester. You can add or remove them before submitting.</p>
+
+            <div class="course-add-form">
+                <div class="field-row" style="gap:12px;margin-bottom:12px;">
+                    <div class="field">
+                        <label>Course ID</label>
+                        <div class="field-wrap">
+                            <span class="field-icon">🆔</span>
+                            <input type="text" id="newCourseId" placeholder="e.g. CS101" style="text-transform:uppercase;">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Course Name</label>
+                        <div class="field-wrap">
+                            <span class="field-icon">📖</span>
+                            <input type="text" id="newCourseName" placeholder="e.g. Intro to CS">
+                        </div>
+                    </div>
+                </div>
+                <button class="add-course-btn" onclick="addManualCourse()">+ Add Course</button>
+            </div>
+
+            <div class="added-courses-list" id="addedCoursesList">
+                <div id="emptyCoursesMsg" style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">
+                    No courses added yet. Use the form above to add your first course.
+                </div>
+            </div>
+
+            <p class="course-count" id="selectedCount">Add at least <strong>1 course</strong> to continue</p>
+
+            <div class="btn-row">
+                <button class="btn-back" onclick="goBack(3)">←</button>
+                <button class="btn-primary" onclick="completeSignup()">Complete Registration 🎓</button>
+            </div>
+        </div>
+
+        <!-- Step 5 — Success -->
+        <div class="step" id="step5">
+            <div class="success-wrap">
+                <div class="success-icon">🎓</div>
+                <div class="role-badge" style="background:rgba(5,150,105,0.1);color:var(--success);">✓ Registration Submitted</div>
+                <h2 class="form-heading" style="margin-bottom:12px;">Welcome aboard!</h2>
+                <p class="form-sub" style="margin-bottom:16px;">Your lecturer account has been created, <strong id="welcomeName"></strong>.</p>
+
+                <div class="pending-banner" style="margin-bottom:16px;text-align:left;">
+                    <span class="icon">🔐</span>
+                    <span>Due to security measures, your account will undergo a <strong>multi-layer institutional verification</strong> process. Our systems will cross-reference your staff credentials, validate your institutional email domain, and run a secure identity handshake with your university's registry. This typically completes within <strong>24 hours</strong> — you'll receive a confirmation once cleared.</span>
+                </div>
+
+                <div class="pending-banner" style="margin-bottom:28px;text-align:left;background:rgba(26,77,46,0.08);border-color:rgba(26,77,46,0.2);">
+                    <span class="icon">📧</span>
+                    <span>A secure activation link will be sent to your institutional email once your identity is verified. Please do not share this link with anyone.</span>
+                </div>
+
+                <button class="btn-primary" onclick="window.location.href='/login/lecturer/'">
+                    Go to Landing Page →
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let selectedTitle = '';
+    let manualCourses = []; // [{id, name}]
+
+    // Theme
+    function toggleTheme() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const t = isDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        localStorage.setItem('gizmo-theme', t);
+        document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const t = localStorage.getItem('gizmo-theme') || 'light';
+        document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+    });
+
+    // Title selection
+    function selectTitle(el, title) {
+        document.querySelectorAll('.title-pill').forEach(p => p.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedTitle = title;
+    }
+
+    // Show/hide password
+    function togglePw(inputId, btnId) {
+        const input = document.getElementById(inputId);
+        const btn = document.getElementById(btnId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.textContent = '🙈';
+        } else {
+            input.type = 'password';
+            btn.textContent = '👁️';
+        }
+    }
+
+    // Manual course add/delete
+    function renderCourses() {
+        const list = document.getElementById('addedCoursesList');
+        const emptyMsg = document.getElementById('emptyCoursesMsg');
+        const countEl = document.getElementById('selectedCount');
+
+        // Clear and re-render
+        list.innerHTML = '';
+        if (manualCourses.length === 0) {
+            list.innerHTML = '<div id="emptyCoursesMsg" style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">No courses added yet. Use the form above to add your first course.</div>';
+            countEl.innerHTML = 'Add at least <strong>1 course</strong> to continue';
+        } else {
+            manualCourses.forEach((c, i) => {
+                const item = document.createElement('div');
+                item.className = 'added-course-item confirmed';
+                item.innerHTML = `
+                    <div class="added-course-info">
+                        <div class="added-course-code">${c.id}</div>
+                        <div class="added-course-name">${c.name}</div>
+                    </div>
+                    <button class="delete-course-btn" onclick="deleteCourse(${i})" title="Remove course">✕</button>
+                `;
+                list.appendChild(item);
+            });
+            const n = manualCourses.length;
+            countEl.innerHTML = `<strong style="color:var(--teacher-mid)">${n} course${n>1?'s':''} added</strong>`;
+        }
+    }
+
+    function addManualCourse() {
+        const idInput = document.getElementById('newCourseId');
+        const nameInput = document.getElementById('newCourseName');
+        const cid = idInput.value.trim().toUpperCase();
+        const cname = nameInput.value.trim();
+
+        if (!cid || !cname) {
+            if (!cid) { idInput.style.borderColor = 'var(--danger)'; setTimeout(() => idInput.style.borderColor = '', 1500); }
+            if (!cname) { nameInput.style.borderColor = 'var(--danger)'; setTimeout(() => nameInput.style.borderColor = '', 1500); }
+            return;
+        }
+        // Check duplicate
+        if (manualCourses.some(c => c.id === cid)) {
+            idInput.style.borderColor = 'var(--danger)';
+            idInput.placeholder = 'ID already added!';
+            setTimeout(() => { idInput.style.borderColor = ''; idInput.placeholder = 'e.g. CS101'; }, 1800);
+            return;
+        }
+        manualCourses.push({ id: cid, name: cname });
+        idInput.value = '';
+        nameInput.value = '';
+        idInput.focus();
+        renderCourses();
+    }
+
+    function deleteCourse(index) {
+        manualCourses.splice(index, 1);
+        renderCourses();
+    }
+
+    // Allow Enter key to add course
+    document.addEventListener('DOMContentLoaded', () => {
+        ['newCourseId','newCourseName'].forEach(id => {
+            document.getElementById(id)?.addEventListener('keydown', e => {
+                if (e.key === 'Enter') addManualCourse();
+            });
+        });
+    });
+
+    function showStep(n) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step' + n).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function goBack(to) { showStep(to); }
+
+    function validate(id, cond) {
+        const err = document.getElementById('err-' + id);
+        if (err) err.classList.toggle('show', !cond);
+        return cond;
+    }
+
+    async function goToStep2() {
+        const fn = document.getElementById('firstName').value.trim();
+        const ln = document.getElementById('lastName').value.trim();
+        const em = document.getElementById('email').value.trim();
+        const si = document.getElementById('staffId').value.trim();
+        const dp = document.getElementById('department').value;
+        const v = [
+            validate('firstName', fn.length > 0),
+            validate('lastName',  ln.length > 0),
+            validate('email',     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)),
+            validate('staffId',   si.length > 2),
+            validate('department',dp.length > 0),
+        ];
+        if (!v.every(Boolean)) return;
+
+        const btn = document.querySelector('#step1 .btn-primary');
+        btn.textContent = 'Checking…'; btn.disabled = true;
+
+        try {
+            const res = await fetch('/api/signup/step1/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    firstName: fn, lastName: ln,
+                    email: em, studentId: si,
+                    department: dp, role: 'lecturer'
+                })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                showStep(2);
+            } else {
+                const errEl = document.getElementById('err-email');
+                errEl.textContent = data.error;
+                errEl.classList.add('show');
+            }
+        } catch(e) {
+            alert('Network error. Please try again.');
+        } finally {
+            btn.textContent = 'Continue →'; btn.disabled = false;
+        }
+    }
+
+    async function goToStep3() {
+        const pw = document.getElementById('password').value;
+        const cp = document.getElementById('confirmPassword').value;
+        if (!validate('password', pw.length >= 8) || !validate('confirm', pw === cp)) return;
+
+        const btn = document.querySelector('#step2 .btn-primary');
+        btn.textContent = 'Sending code…'; btn.disabled = true;
+
+        try {
+            const phoneCountry = document.getElementById('countryCode')?.value || '';
+            const phoneNumber  = document.getElementById('phoneNumber')?.value  || '';
+            const res = await fetch('/api/signup/step2/', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},
+                body: JSON.stringify({password: pw, phoneCountry: phoneCountry, phoneNumber: phoneNumber})
+            });
+            const data = await res.json();
+            if (data.ok) {
+                const email = document.getElementById('email').value;
+                document.getElementById('otpSentTo').textContent =
+                    `Step 3 of 4 — We sent a 6-digit code to ${email}`;
+                showStep(3);
+                startTimer();
+            } else {
+                alert(data.error || 'Something went wrong. Please try again.');
+            }
+        } catch(e) {
+            alert('Network error. Please try again.');
+        } finally {
+            btn.textContent = 'Send Verification Code →'; btn.disabled = false;
+        }
+    }
+
+    function checkStrength(pw) {
+        const bars = [1,2,3,4].map(i => document.getElementById('pb'+i));
+        const label = document.getElementById('pw-label');
+        let score = 0;
+        if (pw.length >= 8) score++;
+        if (/[A-Z]/.test(pw)) score++;
+        if (/[0-9]/.test(pw)) score++;
+        if (/[^A-Za-z0-9]/.test(pw)) score++;
+        const colors = ['#ef4444','#f97316','#eab308','#22c55e'];
+        const labels = ['Too weak','Weak','Good','Strong'];
+        bars.forEach((b,i) => { b.style.background = i < score ? colors[score-1] : 'var(--border)'; });
+        label.textContent = score > 0 ? labels[score-1] : 'Enter a password';
+        label.style.color = score > 0 ? colors[score-1] : 'var(--text-muted)';
+    }
+
+    function otpMove(el, nextIdx) {
+        el.classList.toggle('filled', el.value.length > 0);
+        if (el.value && nextIdx !== null) document.getElementById('otp' + nextIdx)?.focus();
+    }
+    function otpBack(e, el, prevIdx) {
+        if (e.key === 'Backspace' && !el.value && prevIdx !== null) document.getElementById('otp' + prevIdx)?.focus();
+    }
+
+    let timerInterval;
+    function startTimer(s = 600) {
+        clearInterval(timerInterval);
+        let r = s;
+        timerInterval = setInterval(() => {
+            const m = Math.floor(r/60), sec = r%60;
+            document.getElementById('timerDisplay').textContent = `${m}:${String(sec).padStart(2,'0')}`;
+            if (--r < 0) { clearInterval(timerInterval); document.getElementById('timerDisplay').textContent = 'Expired'; }
+        }, 1000);
+    }
+    async function resendOTP() {
+        for (let i=0;i<6;i++) { const el=document.getElementById('otp'+i); if(el){el.value=''; el.classList.remove('filled');} }
+        try {
+            const res = await fetch('/api/signup/resend/', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},
+                body: JSON.stringify({})
+            });
+            const data = await res.json();
+            if (data.ok) { startTimer(); document.getElementById('otp0')?.focus(); }
+            else alert(data.error || 'Could not resend. Please try again.');
+        } catch(e) { alert('Network error. Please try again.'); }
+    }
+    async function verifyOTP() {
+        const code = [0,1,2,3,4,5].map(i=>document.getElementById('otp'+i).value).join('');
+        const err = document.getElementById('err-otp');
+        if (code.length !== 6) {
+            err.style.display = 'block';
+            [0,1,2,3,4,5].forEach(i=>{
+                const el=document.getElementById('otp'+i);
+                el.style.borderColor='var(--danger)';
+                setTimeout(()=>el.style.borderColor='',1200);
+            });
+            return;
+        }
+        const btn = document.querySelector('#step3 .btn-primary');
+        btn.textContent = 'Verifying…'; btn.disabled = true;
+        try {
+            const res = await fetch('/api/signup/verify/', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},
+                body: JSON.stringify({code: code, purpose: 'signup'})
+            });
+            const data = await res.json();
+            if (data.ok) {
+                err.style.display = 'none';
+                clearInterval(timerInterval);
+                showStep(4);
+            } else {
+                err.textContent = data.error || 'Invalid code. Please try again.';
+                err.style.display = 'block';
+                [0,1,2,3,4,5].forEach(i=>{
+                    const el=document.getElementById('otp'+i);
+                    el.style.borderColor='var(--danger)';
+                    setTimeout(()=>el.style.borderColor='',1200);
+                });
+            }
+        } catch(e) { alert('Network error. Please try again.'); }
+        finally { btn.textContent = 'Verify & Continue →'; btn.disabled = false; }
+    }
+
+    async function completeSignup() {
+        if (manualCourses.length === 0) { alert('Please add at least one course you teach.'); return; }
+        await finaliseSignup();
+    }
+
+    async function finaliseSignup() {
+        const btn = document.querySelector('#step4 .btn-primary');
+        if(btn){ btn.textContent = 'Setting up…'; btn.disabled = true; }
+
+        const pw           = document.getElementById('password').value;
+        const phoneCountry = document.getElementById('countryCode')?.value || '';
+        const phoneNumber  = document.getElementById('phoneNumber')?.value  || '';
+
+        try {
+            const res = await fetch('/api/signup/complete/', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},
+                body: JSON.stringify({
+                    password:        pw,
+                    confirmPassword: pw,
+                    phoneCountry:    phoneCountry,
+                    phoneNumber:     phoneNumber,
+                    courses:         manualCourses
+                })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                const title     = selectedTitle ? selectedTitle + ' ' : '';
+                const firstName = document.getElementById('firstName').value;
+                const lastName  = document.getElementById('lastName').value;
+                document.getElementById('welcomeName').textContent = title + firstName + ' ' + lastName;
+                showStep(5);
+                setTimeout(() => { window.location.href = data.redirect || '/pending-approval/'; }, 2500);
+            } else {
+                alert(data.error || 'Something went wrong. Please try again.');
+                if(btn){ btn.textContent = 'Complete Registration 🎓'; btn.disabled = false; }
+            }
+        } catch(e) {
+            alert('Network error. Please try again.');
+            if(btn){ btn.textContent = 'Complete Registration 🎓'; btn.disabled = false; }
+        }
+    }
+
+    function getCookie(name) {
+        const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+        return v ? v[2] : null;
+    }
+</script>
+</body>
+</html>

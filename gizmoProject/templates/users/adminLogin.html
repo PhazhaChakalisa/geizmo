@@ -1,0 +1,497 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEIZMO — Admin Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            if (localStorage.getItem('gizmo-theme') === 'dark')
+                document.documentElement.setAttribute('data-theme', 'dark');
+        })();
+    </script>
+    <style>
+        :root {
+            --admin:       #1a0533;
+            --admin-mid:   #4c1d95;
+            --admin-light: #7c3aed;
+            --accent:      #f59e0b;
+            --danger:      #dc2626;
+            --bg:          #fafaf8;
+            --bg-card:     #ffffff;
+            --text:        #1a1a1a;
+            --text-soft:   #666666;
+            --text-muted:  #999999;
+            --border:      #e5e5e0;
+        }
+        [data-theme="dark"] {
+            --bg:      #0a0612;
+            --bg-card: #100b1f;
+            --text:    #e6edf3;
+            --text-soft: #8b949e;
+            --text-muted: #6e7681;
+            --border:  #2a1f3d;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* LEFT DECORATIVE PANEL */
+        .panel-deco {
+            width: 42%;
+            min-height: 100vh;
+            background: linear-gradient(160deg, var(--admin) 0%, var(--admin-mid) 60%, var(--admin-light) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 52px;
+            position: relative;
+            overflow: hidden;
+        }
+        .panel-deco::before {
+            content: '';
+            position: absolute;
+            width: 420px; height: 420px;
+            border-radius: 50%;
+            background: rgba(245,158,11,0.07);
+            top: -80px; left: -80px;
+        }
+        .panel-deco::after {
+            content: '';
+            position: absolute;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: rgba(124,58,237,0.15);
+            bottom: 60px; right: -60px;
+        }
+        .panel-logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            position: relative; z-index: 1;
+        }
+        .logo-mark {
+            width: 44px; height: 44px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Crimson Pro', serif;
+            font-size: 22px; font-weight: 700;
+            color: var(--admin);
+        }
+        .logo-text {
+            font-family: 'Crimson Pro', serif;
+            font-size: 24px; font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+        .panel-body { position: relative; z-index: 1; }
+        .panel-eyebrow {
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 2.5px; text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 18px;
+        }
+        .panel-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 40px; font-weight: 700;
+            color: #ffffff;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+        .panel-sub {
+            font-size: 15px; line-height: 1.7;
+            color: rgba(255,255,255,0.65);
+            max-width: 340px;
+        }
+        .panel-stats {
+            display: flex; gap: 28px;
+            position: relative; z-index: 1;
+        }
+        .stat-pill {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            padding: 14px 20px;
+        }
+        .stat-pill .val {
+            font-family: 'Crimson Pro', serif;
+            font-size: 26px; font-weight: 700;
+            color: var(--accent);
+        }
+        .stat-pill .lbl {
+            font-size: 11px; color: rgba(255,255,255,0.5);
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-top: 2px;
+        }
+        .panel-footer-note {
+            font-size: 12px;
+            color: rgba(255,255,255,0.35);
+            position: relative; z-index: 1;
+        }
+
+        /* RIGHT FORM PANEL */
+        .panel-form {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+            position: relative;
+        }
+        .theme-btn {
+            position: absolute; top: 24px; right: 24px;
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .theme-btn:hover { border-color: var(--admin-light); transform: scale(1.05); }
+
+        .form-wrap { width: 100%; max-width: 420px; }
+
+        .role-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px;
+            background: rgba(76,29,149,0.1);
+            color: var(--admin-light);
+            border-radius: 20px;
+            font-size: 12px; font-weight: 700;
+            letter-spacing: 0.5px; text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .form-heading {
+            font-family: 'Crimson Pro', serif;
+            font-size: 36px; font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .form-sub {
+            color: var(--text-soft); font-size: 15px;
+            margin-bottom: 32px; line-height: 1.6;
+        }
+
+        /* Error / info banners */
+        .login-error, .login-info {
+            display: none;
+            align-items: flex-start; gap: 10px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .login-error { background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.2); color: #dc2626; }
+        .login-info  { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); color: #b45309; }
+        .login-error.show, .login-info.show { display: flex; }
+
+        /* Fields */
+        .field-group { margin-bottom: 18px; }
+        .field-label {
+            font-size: 13px; font-weight: 600;
+            color: var(--text-soft);
+            margin-bottom: 7px; display: block;
+            letter-spacing: 0.3px;
+        }
+        .field-wrap { position: relative; }
+        .field-icon {
+            position: absolute; left: 14px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px; pointer-events: none;
+        }
+        .field-eye {
+            position: absolute; right: 14px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px; cursor: pointer;
+            background: none; border: none;
+            color: var(--text-muted);
+            padding: 4px; transition: color 0.2s;
+        }
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 13px 16px 13px 42px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-card);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            transition: all 0.2s;
+            outline: none;
+        }
+        input:focus {
+            border-color: var(--admin-light);
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+        }
+        .field-error {
+            font-size: 12px; color: var(--danger);
+            margin-top: 5px; display: none;
+        }
+        .field-error.show { display: block; }
+
+        .remember-row {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .remember-me {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 14px; color: var(--text-soft); cursor: pointer;
+        }
+        .remember-me input { width:16px; height:16px; accent-color: var(--admin-light); }
+        .forgot-link {
+            font-size: 13px; color: var(--admin-light);
+            cursor: pointer; font-weight: 500;
+            text-decoration: none;
+        }
+        .forgot-link:hover { text-decoration: underline; }
+
+        .btn-primary {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, var(--admin-mid), var(--admin-light));
+            color: #fff; border: none; border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(76,29,149,0.35); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .spinner {
+            display: none; width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .security-note {
+            display: flex; align-items: center; gap: 8px;
+            margin-top: 20px; padding: 10px 14px;
+            background: rgba(76,29,149,0.05);
+            border: 1px solid rgba(76,29,149,0.12);
+            border-radius: 8px;
+            font-size: 12px; color: var(--text-muted);
+        }
+        .back-link {
+            text-align: center; margin-top: 24px;
+            font-size: 14px; color: var(--text-soft);
+        }
+        .back-link a {
+            color: var(--admin-light); font-weight: 500;
+            text-decoration: none;
+        }
+        .back-link a:hover { text-decoration: underline; }
+
+        /* Forgot password modal */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: var(--bg-card);
+            border-radius: 16px; padding: 32px;
+            width: 90%; max-width: 400px;
+            position: relative;
+            animation: popIn 0.25s ease;
+        }
+        @keyframes popIn {
+            from { opacity:0; transform: scale(0.95) translateY(10px); }
+            to   { opacity:1; transform: scale(1)    translateY(0);    }
+        }
+        .modal-close {
+            position: absolute; top: 16px; right: 16px;
+            cursor: pointer; font-size: 18px;
+            color: var(--text-muted);
+            background: none; border: none; padding: 4px;
+        }
+        .modal-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 22px; font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .panel-deco { display: none; }
+            .panel-form { padding: 40px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Forgot password modal -->
+<div class="modal-overlay" id="forgotModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeForgot()">✕</button>
+        <p class="modal-title">Reset Password</p>
+        <p style="color:var(--text-soft);font-size:14px;margin-bottom:24px;">
+            Enter your admin email and a reset code will be sent.
+        </p>
+        <div class="field-wrap" style="margin-bottom:16px;">
+            <span class="field-icon">✉️</span>
+            <input type="email" id="resetEmail" placeholder="admin@gizmo.edu"
+                   style="padding:13px 16px 13px 42px;">
+        </div>
+        <button class="btn-primary" onclick="sendReset()">Send Reset Code</button>
+    </div>
+</div>
+
+<!-- LEFT decorative panel -->
+<div class="panel-deco">
+    <a href="/" class="panel-logo">
+        <div class="logo-mark">G</div>
+        <span class="logo-text">GEIZMO</span>
+    </a>
+
+    <div class="panel-body">
+        <p class="panel-eyebrow">🛡️ Admin Portal</p>
+        <h1 class="panel-title">Platform<br>Control Centre</h1>
+        <p class="panel-sub">
+            Manage users, approve lecturers, review issue reports,
+            and monitor platform health — all from one secure dashboard.
+        </p>
+    </div>
+
+    <p class="panel-footer-note">🔒 This portal is restricted to authorised administrators only.</p>
+</div>
+
+<!-- RIGHT form panel -->
+<div class="panel-form">
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+
+    <div class="form-wrap">
+        <div class="role-badge">🛡️ Administrator</div>
+        <h2 class="form-heading">Admin Sign In</h2>
+        <p class="form-sub">Restricted access — authorised personnel only</p>
+
+        <!-- Error banner -->
+        <div class="login-error{% if messages %} show{% endif %}" id="loginError">
+            ⚠️
+            <span id="loginErrorMsg">
+                {% if messages %}{% for message in messages %}{{ message }}{% endfor %}
+                {% else %}Access denied. Please check your credentials.{% endif %}
+            </span>
+        </div>
+
+        <form method="POST" action="/login/admin/" id="loginForm">
+            {% csrf_token %}
+
+            <div class="field-group">
+                <label class="field-label">Admin Email</label>
+                <div class="field-wrap">
+                    <span class="field-icon">✉️</span>
+                    <input type="email" id="emailInput" name="email"
+                           placeholder="admin@gizmo.edu"
+                           autocomplete="email">
+                </div>
+                <div class="field-error" id="err-email">Please enter your email</div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Password</label>
+                <div class="field-wrap">
+                    <span class="field-icon">🔑</span>
+                    <input type="password" id="passwordInput" name="password"
+                           placeholder="Your password"
+                           autocomplete="current-password">
+                    <button type="button" class="field-eye" id="eyeBtn" onclick="togglePw()">👁️</button>
+                </div>
+                <div class="field-error" id="err-password">Please enter your password</div>
+            </div>
+
+            <div class="remember-row">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember"> Remember me
+                </label>
+                <a class="forgot-link" onclick="openForgot()">Forgot password?</a>
+            </div>
+
+            <button class="btn-primary" id="loginBtn" type="submit">
+                <div class="spinner" id="spinner"></div>
+                <span id="loginBtnText">Sign In to Admin Panel</span>
+            </button>
+        </form>
+
+        <div class="security-note">
+            🔒 <span>All admin activity is logged. Unauthorised access attempts are reported.</span>
+        </div>
+
+        <div class="back-link">
+            ← Back to <a href="/">GEIZMO Home</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let pwVisible = false;
+
+    function toggleTheme() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+        localStorage.setItem('gizmo-theme', isDark ? '' : 'dark');
+        document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+    }
+
+    function togglePw() {
+        pwVisible = !pwVisible;
+        document.getElementById('passwordInput').type = pwVisible ? 'text' : 'password';
+        document.getElementById('eyeBtn').textContent  = pwVisible ? '🙈' : '👁️';
+    }
+
+    function openForgot() { document.getElementById('forgotModal').classList.add('show'); }
+    function closeForgot() { document.getElementById('forgotModal').classList.remove('show'); }
+
+    function sendReset() {
+        const email = document.getElementById('resetEmail').value.trim();
+        if (!email) return;
+        alert('If ' + email + ' is a registered admin, a reset code will be sent shortly.');
+        closeForgot();
+    }
+
+    function doLogin(e) {
+        const email = document.getElementById('emailInput').value.trim();
+        const pw    = document.getElementById('passwordInput').value;
+        const emailErr = document.getElementById('err-email');
+        const pwErr    = document.getElementById('err-password');
+
+        emailErr.classList.toggle('show', !email);
+        pwErr.classList.toggle('show', !pw);
+        if (!email || !pw) { if(e) e.preventDefault(); return; }
+
+        // Show spinner while form submits
+        const btn     = document.getElementById('loginBtn');
+        const spinner = document.getElementById('spinner');
+        const btnText = document.getElementById('loginBtnText');
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        btnText.textContent   = 'Verifying…';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('loginForm');
+        if (form) form.addEventListener('submit', doLogin);
+
+        // Restore theme icon
+        if (localStorage.getItem('gizmo-theme') === 'dark')
+            document.getElementById('themeBtn').textContent = '☀️';
+    });
+</script>
+</body>
+</html>

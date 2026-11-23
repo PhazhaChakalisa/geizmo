@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIZMO — Under Maintenance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Sora', sans-serif;
+            background: #0f0a2e;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Animated background orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: float 8s ease-in-out infinite;
+        }
+        .orb-1 { width: 500px; height: 500px; background: rgba(91,79,207,0.25); top: -100px; right: -100px; }
+        .orb-2 { width: 400px; height: 400px; background: rgba(240,180,41,0.1); bottom: -80px; left: -80px; animation-delay: -4s; }
+        .orb-3 { width: 300px; height: 300px; background: rgba(0,200,150,0.08); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        .card {
+            position: relative;
+            z-index: 10;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 28px;
+            padding: 56px 48px;
+            max-width: 520px;
+            width: 90%;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 60px rgba(91,79,207,0.15);
+        }
+
+        .gear-wrap {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, #5b4fcf, #7c6fff);
+            border-radius: 22px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 28px;
+            box-shadow: 0 8px 32px rgba(91,79,207,0.5);
+            animation: spin-slow 6s linear infinite;
+        }
+
+        @keyframes spin-slow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .logo-row {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-bottom: 32px;
+        }
+        .logo-mark {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #5b4fcf, #7c6fff);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 20px; font-weight: 800; color: white;
+        }
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px; font-weight: 700; color: white;
+        }
+        .logo-sub {
+            font-size: 9px; font-weight: 700; letter-spacing: 2.5px;
+            text-transform: uppercase; color: #f0b429; margin-top: 1px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px; font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff, #a99fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .message {
+            font-size: 14px; line-height: 1.7;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 36px;
+        }
+
+        .status-bar {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 20px;
+            background: rgba(240,180,41,0.1);
+            border: 1px solid rgba(240,180,41,0.2);
+            border-radius: 12px;
+            font-size: 13px; font-weight: 600; color: #f0b429;
+            margin-bottom: 28px;
+        }
+        .pulse {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #f0b429;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.4); }
+        }
+
+        .admin-link {
+            font-size: 12px; color: rgba(255,255,255,0.3);
+            margin-top: 24px;
+        }
+        .admin-link a {
+            color: rgba(124,111,255,0.7);
+            text-decoration: none;
+        }
+        .admin-link a:hover { color: #7c6fff; }
+    </style>
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="card">
+        <div class="logo-row">
+            <div class="logo-mark">G</div>
+            <div>
+                <div class="logo-text">GIZMO</div>
+                <div class="logo-sub">AI Grading Platform</div>
+            </div>
+        </div>
+
+        <div class="gear-wrap">⚙️</div>
+
+        <h1>Under Maintenance</h1>
+
+        <p class="message">{{ message }}</p>
+
+        <div class="status-bar">
+            <div class="pulse"></div>
+            Maintenance in progress — please check back soon
+        </div>
+
+        <p class="admin-link">
+            Are you an admin? <a href="/login/admin/">Sign in here →</a>
+        </p>
+    </div>
+</body>
+</html>

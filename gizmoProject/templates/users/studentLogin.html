@@ -1,0 +1,547 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIZMO — Student Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            if (localStorage.getItem('gizmo-theme') === 'dark')
+                document.documentElement.setAttribute('data-theme', 'dark');
+        })();
+    </script>
+    <style>
+        :root {
+            --student: #3730a3;
+            --student-mid: #4f46e5;
+            --student-light: #6366f1;
+            --accent: #f59e0b;
+            --success: #059669;
+            --danger: #dc2626;
+            --bg: #f8f8fc;
+            --bg-card: #ffffff;
+            --text: #1e1b4b;
+            --text-soft: #6b7280;
+            --text-muted: #9ca3af;
+            --border: #e0e0f0;
+        }
+        [data-theme="dark"] {
+            --bg: #0d0d1a;
+            --bg-card: #13131f;
+            --text: #e2e8f0;
+            --text-soft: #94a3b8;
+            --text-muted: #64748b;
+            --border: #1e1e3a;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* LEFT PANEL */
+        .panel-left {
+            width: 42%;
+            min-height: 100vh;
+            background: linear-gradient(160deg, #1e1b4b 0%, #3730a3 45%, #4f46e5 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 52px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .panel-left::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 360px; height: 360px;
+            background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .panel-left::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -60px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .floating-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            padding: 4px 0;
+        }
+        .float-card {
+            background: rgba(255,255,255,0.10);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 14px;
+            padding: 13px 16px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            width: 100%;
+            animation: float 3s ease-in-out infinite;
+            transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .float-card:hover {
+            background: rgba(255,255,255,0.16);
+            transform: translateX(4px);
+        }
+        .float-card:nth-child(2) { animation-delay: 1.5s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-6px); }
+        }
+        .float-icon {
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .float-text { color: white; flex: 1; }
+        .float-text strong { font-size: 13.5px; font-weight: 700; display: block; letter-spacing: -0.1px; }
+        .float-text span { font-size: 11.5px; opacity: 0.6; margin-top: 1px; display: block; }
+
+        .panel-logo {
+            font-family: 'Crimson Pro', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #1e1b4b; font-size: 20px;
+        }
+        .panel-content {
+            position: relative;
+            z-index: 2;
+        }
+        .panel-eyebrow {
+            font-size: 12px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 16px;
+        }
+        .panel-headline {
+            font-family: 'Crimson Pro', serif;
+            font-size: 48px; font-weight: 700;
+            color: white; line-height: 1.1; margin-bottom: 20px;
+        }
+        .panel-sub {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px; line-height: 1.7; max-width: 340px;
+        }
+        .panel-bottom { position: relative; z-index: 2; }
+        .panel-bottom p { color: rgba(255,255,255,0.5); font-size: 13px; }
+
+        /* RIGHT PANEL */
+        .panel-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 64px;
+            position: relative;
+        }
+        .theme-btn {
+            position: absolute; top: 28px; right: 28px;
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            cursor: pointer; font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; color: var(--text);
+        }
+        .theme-btn:hover { border-color: var(--student-light); transform: scale(1.05); }
+
+        .form-wrap { width: 100%; max-width: 440px; }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center; gap: 6px;
+            padding: 6px 14px;
+            background: rgba(99,102,241,0.1);
+            color: var(--student-mid);
+            border-radius: 20px;
+            font-size: 12px; font-weight: 700;
+            letter-spacing: 0.5px; text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .form-heading {
+            font-family: 'Crimson Pro', serif;
+            font-size: 40px; font-weight: 700;
+            color: var(--text); margin-bottom: 8px;
+        }
+        .form-sub {
+            color: var(--text-soft); font-size: 15px;
+            margin-bottom: 40px; line-height: 1.6;
+        }
+
+        .field { margin-bottom: 20px; }
+        .field label {
+            display: block; font-size: 13px; font-weight: 600;
+            color: var(--text); margin-bottom: 8px; letter-spacing: 0.3px;
+        }
+        .field-wrap { position: relative; }
+        .field-icon {
+            position: absolute; left: 14px; top: 50%;
+            transform: translateY(-50%); font-size: 16px; pointer-events: none;
+        }
+        .field-eye {
+            position: absolute; right: 14px; top: 50%;
+            transform: translateY(-50%); font-size: 16px;
+            cursor: pointer; user-select: none;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 13px 44px 13px 42px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--bg-card);
+            transition: all 0.25s; outline: none;
+        }
+        input:focus {
+            border-color: var(--student-light);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+        .field-error {
+            font-size: 12px; color: var(--danger);
+            margin-top: 6px; display: none;
+        }
+        .field-error.show { display: block; }
+
+        .forgot-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-soft);
+            cursor: pointer;
+        }
+        .remember-me input[type="checkbox"] {
+            width: 16px; height: 16px;
+            accent-color: var(--student-mid);
+            cursor: pointer;
+        }
+        .forgot-link {
+            font-size: 13px;
+            color: var(--student-mid);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .forgot-link:hover { text-decoration: underline; }
+
+        /* Error alert */
+        .alert-error {
+            background: rgba(220,38,38,0.08);
+            border: 1px solid rgba(220,38,38,0.2);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--danger);
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-error.show { display: flex; }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--student), var(--student-mid));
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px; font-weight: 600;
+            cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(55,48,163,0.25);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            position: relative;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(55,48,163,0.35); }
+        .btn-primary .spinner {
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .divider {
+            display: flex; align-items: center; gap: 16px;
+            margin: 24px 0; color: var(--text-muted); font-size: 12px;
+        }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        .signup-link {
+            text-align: center; margin-top: 20px;
+            font-size: 14px; color: var(--text-soft);
+        }
+        .signup-link a {
+            color: var(--student-mid); font-weight: 600; text-decoration: none;
+        }
+        .signup-link a:hover { text-decoration: underline; }
+
+        /* Forgot password overlay */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+            animation: stepIn 0.35s ease;
+        }
+        @keyframes stepIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .modal-close {
+            float: right; font-size: 22px; cursor: pointer;
+            color: var(--text-muted); line-height: 1;
+        }
+        .modal-close:hover { color: var(--text); }
+
+        .info-strip {
+            background: rgba(99,102,241,0.06);
+            border: 1px solid rgba(99,102,241,0.15);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--text-soft);
+            margin-bottom: 24px;
+            display: flex; gap: 10px; align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .panel-left { display: none; }
+            .panel-right { padding: 40px 28px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Forgot Password Modal -->
+<div class="modal-overlay" id="forgotModal">
+    <div class="modal-box">
+        <span class="modal-close" onclick="closeForgot()">✕</span>
+        <h3 style="font-family:'Crimson Pro',serif;font-size:28px;font-weight:700;margin-bottom:8px;">Reset Password</h3>
+        <p style="color:var(--text-soft);font-size:14px;margin-bottom:24px;">Enter your university email and we'll send you a reset link.</p>
+        <div class="field">
+            <label>University Email</label>
+            <div class="field-wrap">
+                <span class="field-icon">✉️</span>
+                <input type="email" id="resetEmail" placeholder="s.johnson@university.edu" style="padding:13px 16px 13px 42px;">
+            </div>
+        </div>
+        <button class="btn-primary" onclick="sendReset()" style="margin-top:8px;">Send Reset Link</button>
+    </div>
+</div>
+
+<div class="panel-left">
+    <a href="/" class="panel-logo">
+        <div class="logo-icon">G</div>
+        GIZMO
+    </a>
+
+    <div class="panel-content">
+        <div class="panel-eyebrow">Student Portal</div>
+        <h1 class="panel-headline">Good to see<br>you again.</h1>
+        <p class="panel-sub">Pick up where you left off. Your practice sessions, progress, and courses are waiting.</p>
+    </div>
+
+    <div class="floating-cards">
+        <div class="float-card">
+            <div class="float-icon">🔥</div>
+            <div class="float-text">
+                <strong>7-day streak!</strong>
+                <span>Keep it up, Sarah</span>
+            </div>
+        </div>
+        <div class="float-card">
+            <div class="float-icon">📈</div>
+            <div class="float-text">
+                <strong>Score up 12%</strong>
+                <span>This week's average</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-bottom">
+        <p>New to GIZMO? <strong><a href="/signup/student/" style="color:var(--accent);text-decoration:none;">Create an account →</a></strong></p>
+    </div>
+</div>
+
+<div class="panel-right">
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+
+    <div class="form-wrap">
+    <form method="POST" action="/login/student/" id="loginForm">
+    {% csrf_token %}
+        <div class="role-badge">🎓 Student Sign In</div>
+        <h2 class="form-heading">Welcome back</h2>
+        <p class="form-sub">Sign in to continue your learning journey</p>
+
+        <div class="alert-error" id="loginError">
+            <span>🚫</span>
+            <span id="loginErrorMsg">
+            {% if messages %}{% for message in messages %}{{ message }}{% endfor %}{% else %}Invalid email or password.{% endif %}
+            </span>
+        </div>
+
+        <div class="field">
+            <label>University Email or Student ID</label>
+            <div class="field-wrap">
+                <span class="field-icon">✉️</span>
+                <input type="text" id="emailInput" name="email" placeholder="s.johnson@university.edu">
+            </div>
+            <div class="field-error" id="err-email">Please enter your email or student ID</div>
+        </div>
+
+        <div class="field">
+            <label>Password</label>
+            <div class="field-wrap">
+                <span class="field-icon">🔑</span>
+                <input type="password" id="passwordInput" name="password" placeholder="Your password">
+                <span class="field-eye" id="eyeBtn" onclick="togglePw()">👁️</span>
+            </div>
+            <div class="field-error" id="err-password">Please enter your password</div>
+        </div>
+
+        <div class="forgot-row">
+            <label class="remember-me">
+                <input type="checkbox" id="rememberMe"> Remember me
+            </label>
+            <a class="forgot-link" onclick="openForgot()">Forgot password?</a>
+        </div>
+
+        <button class="btn-primary" id="loginBtn" type="submit">
+            <div class="spinner" id="spinner"></div>
+            <span id="loginBtnText">Sign In</span>
+        </button>
+
+        <div class="divider">or</div>
+
+        <div class="info-strip">
+            <span>💡</span>
+            <span>Use your university credentials or the email you registered with</span>
+        </div>
+
+        <div class="signup-link">
+            Don't have an account? <a href="/signup/student/">Create one — it's free</a>
+        </div>
+        <div class="signup-link" style="margin-top:10px;">
+            Are you an educator? <a href="/login/lecturer/">Lecturer sign in →</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleTheme() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const t = isDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        localStorage.setItem('gizmo-theme', t);
+        document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const t = localStorage.getItem('gizmo-theme') || 'light';
+        document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+    });
+
+    let pwVisible = false;
+    function togglePw() {
+        pwVisible = !pwVisible;
+        const input = document.getElementById('passwordInput');
+        input.type = pwVisible ? 'text' : 'password';
+        document.getElementById('eyeBtn').textContent = pwVisible ? '🙈' : '👁️';
+    }
+
+    function openForgot() { document.getElementById('forgotModal').classList.add('show'); }
+    function closeForgot() { document.getElementById('forgotModal').classList.remove('show'); }
+
+
+
+    function doLogin(e) {
+        const email = document.getElementById('emailInput').value.trim();
+        const pw    = document.getElementById('passwordInput').value;
+        const emailErr = document.getElementById('err-email');
+        const pwErr    = document.getElementById('err-password');
+
+        emailErr.classList.toggle('show', !email);
+        pwErr.classList.toggle('show', !pw);
+        if (!email || !pw) { if(e) e.preventDefault(); return; }
+
+        // Show spinner while form submits
+        const btn     = document.getElementById('loginBtn');
+        const spinner = document.getElementById('spinner');
+        const btnText = document.getElementById('loginBtnText');
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        btnText.textContent = 'Signing in…';
+        // Form submits normally to Django — no need to prevent default
+    }
+
+    // Wire form submit
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('loginForm');
+        if (form) form.addEventListener('submit', doLogin);
+    });
+
+    function sendReset() {
+        const email = document.getElementById('resetEmail').value.trim();
+        if (!email) return;
+        alert('If ' + email + ' is registered, you will receive a reset code shortly.');
+        closeForgot();
+    }
+</script>
+</body>
+</html>

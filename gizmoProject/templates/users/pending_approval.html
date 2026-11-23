@@ -1,0 +1,393 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIZMO — Account Pending Approval</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            if (localStorage.getItem('gizmo-theme') === 'dark')
+                document.documentElement.setAttribute('data-theme', 'dark');
+        })();
+    </script>
+    <style>
+        :root {
+            --teacher:       #1a4d2e;
+            --teacher-mid:   #2d6a4f;
+            --teacher-light: #40916c;
+            --accent:        #f59e0b;
+            --bg:            #f4f8f5;
+            --bg-card:       #ffffff;
+            --text:          #1a2e1f;
+            --text-soft:     #6b7280;
+            --text-muted:    #9ca3af;
+            --border:        #d8ead0;
+        }
+        [data-theme="dark"] {
+            --bg:        #0a0f0c;
+            --bg-card:   #111a13;
+            --text:      #e2ead4;
+            --text-soft: #94a3b8;
+            --text-muted:#64748b;
+            --border:    #1a2e1f;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        /* ── TOP NAV ── */
+        .topbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 60px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 10;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text);
+        }
+        .logo-mark {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--teacher) 0%, var(--teacher-light) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Crimson Pro', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .logo-name {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .theme-btn {
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 50%;
+            width: 36px; height: 36px;
+            cursor: pointer;
+            font-size: 15px;
+            color: var(--text-soft);
+            transition: all 0.2s;
+        }
+        .theme-btn:hover { border-color: var(--teacher-light); }
+        .logout-btn {
+            padding: 7px 16px;
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-soft);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .logout-btn:hover { border-color: var(--teacher-light); color: var(--teacher-light); }
+
+        /* ── MAIN CARD ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 56px 48px;
+            max-width: 580px;
+            width: 100%;
+            text-align: center;
+            margin-top: 60px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.06);
+        }
+
+        /* ── ANIMATED CLOCK ICON ── */
+        .icon-wrap {
+            width: 96px; height: 96px;
+            background: linear-gradient(135deg, rgba(26,77,46,0.1) 0%, rgba(64,145,108,0.15) 100%);
+            border: 2px solid rgba(64,145,108,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 44px;
+            margin: 0 auto 28px;
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1);    box-shadow: 0 0 0 0   rgba(64,145,108,0.3); }
+            50%       { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(64,145,108,0); }
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            background: rgba(245,158,11,0.1);
+            color: #d97706;
+            border: 1px solid rgba(245,158,11,0.25);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        .card-sub {
+            font-size: 15px;
+            color: var(--text-soft);
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        /* ── STEPS ── */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 36px;
+            text-align: left;
+        }
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .step-item:last-child { border-bottom: none; }
+        .step-dot {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .step-dot.done {
+            background: rgba(5,150,105,0.12);
+            color: #059669;
+            border: 1.5px solid rgba(5,150,105,0.3);
+        }
+        .step-dot.active {
+            background: rgba(245,158,11,0.12);
+            color: #d97706;
+            border: 1.5px solid rgba(245,158,11,0.3);
+            animation: spin 3s linear infinite;
+        }
+        .step-dot.pending {
+            background: var(--bg);
+            color: var(--text-muted);
+            border: 1.5px solid var(--border);
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .step-body {}
+        .step-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-soft);
+            line-height: 1.5;
+        }
+
+        /* ── INFO BOX ── */
+        .info-box {
+            background: rgba(26,77,46,0.05);
+            border: 1px solid rgba(64,145,108,0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 13px;
+            color: var(--text-soft);
+            line-height: 1.6;
+            margin-bottom: 28px;
+            text-align: left;
+        }
+        .info-box strong { color: var(--teacher-light); }
+
+        /* ── ACTIONS ── */
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn-check {
+            padding: 13px 24px;
+            background: linear-gradient(135deg, var(--teacher) 0%, var(--teacher-light) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-check:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,77,46,0.3); }
+        .btn-secondary {
+            padding: 12px 24px;
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-soft);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { border-color: var(--teacher-light); color: var(--teacher-light); }
+
+        /* ── FOOTER ── */
+        .page-footer {
+            margin-top: 32px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        .page-footer a {
+            color: var(--teacher-light);
+            text-decoration: none;
+        }
+        .page-footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .card { padding: 36px 24px; }
+            .card-title { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topbar">
+    <a href="/" class="logo">
+        <div class="logo-mark">G</div>
+        <span class="logo-name">GIZMO</span>
+    </a>
+    <div class="topbar-right">
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+        <a href="/logout/" class="logout-btn">Sign out</a>
+    </div>
+</div>
+
+<!-- MAIN CARD -->
+<div class="card">
+    <div class="icon-wrap">⏳</div>
+
+    <div class="badge">⚡ Awaiting Approval</div>
+
+    <h1 class="card-title">Your account is<br>under review</h1>
+    <p class="card-sub">
+        Thank you for registering as an educator on GIZMO.
+        Our team is verifying your institutional affiliation.
+        This usually takes <strong>less than 24 hours</strong>.
+    </p>
+
+    <!-- PROGRESS STEPS -->
+    <div class="steps">
+        <div class="step-item">
+            <div class="step-dot done">✓</div>
+            <div class="step-body">
+                <div class="step-label">Account created</div>
+                <div class="step-desc">Your details have been saved and your email is verified.</div>
+            </div>
+        </div>
+        <div class="step-item">
+            <div class="step-dot active">◌</div>
+            <div class="step-body">
+                <div class="step-label">Admin review — in progress</div>
+                <div class="step-desc">Our team is verifying your institutional credentials.</div>
+            </div>
+        </div>
+        <div class="step-item">
+            <div class="step-dot pending">3</div>
+            <div class="step-body">
+                <div class="step-label">Approval &amp; access granted</div>
+                <div class="step-desc">You'll receive an email and can then sign in to your dashboard.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="info-box">
+        📧 <strong>Check your inbox.</strong> We'll send a confirmation email to
+        <strong>{% if user.is_authenticated %}{{ user.email }}{% else %}your registered address{% endif %}</strong>
+        as soon as your account is approved. Check your spam folder too.
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+        <a href="/login/lecturer/" class="btn-check">Check approval status →</a>
+        <a href="/" class="btn-secondary">← Back to home</a>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+    Questions? Contact us at
+    <a href="mailto:support@gizmo.edu">support@gizmo.edu</a>
+    &nbsp;·&nbsp;
+    <a href="/">GIZMO Home</a>
+</div>
+
+<script>
+    function toggleTheme() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+        localStorage.setItem('gizmo-theme', isDark ? '' : 'dark');
+        document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (localStorage.getItem('gizmo-theme') === 'dark')
+            document.getElementById('themeBtn').textContent = '☀️';
+    });
+</script>
+</body>
+</html>
