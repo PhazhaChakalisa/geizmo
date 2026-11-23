@@ -3,10 +3,10 @@ from django.conf import settings
 
 
 def send_otp_email(to_email, code, first_name=''):
-    subject = 'Your GIZMO Verification Code'
+    subject = 'Your GEIZMO Verification Code'
     message = f"""Hi {first_name},
 
-Your GIZMO email verification code is:
+Your GEIZMO email verification code is:
 
     {code}
 
@@ -14,7 +14,7 @@ This code expires in 10 minutes. Do not share it with anyone.
 
 If you did not request this, please ignore this email.
 
-— The GIZMO Team
+— The GEIZMO Team
 """
     send_mail(
         subject,
@@ -26,15 +26,15 @@ If you did not request this, please ignore this email.
 
 
 def send_approval_email(to_email, first_name=''):
-    subject = 'Your GIZMO Lecturer Account Has Been Approved'
+    subject = 'Your GEIZMO Lecturer Account Has Been Approved'
     message = f"""Hi {first_name},
 
-Great news! Your GIZMO lecturer account has been approved by an administrator.
+Great news! Your GEIZMO lecturer account has been approved by an administrator.
 
 You can now sign in at:
 http://127.0.0.1:8000/login/lecturer/
 
-— The GIZMO Team
+— The GEIZMO Team
 """
     send_mail(
         subject,
@@ -46,10 +46,10 @@ http://127.0.0.1:8000/login/lecturer/
 
 
 def send_maintenance_email(to_email, first_name='', message=''):
-    subject = '⚙️ GIZMO Platform — Scheduled Maintenance'
+    subject = '⚙️ GEIZMO Platform — Scheduled Maintenance'
     body = f"""Hi {first_name},
 
-We wanted to let you know that the GIZMO platform is currently undergoing scheduled maintenance.
+We wanted to let you know that the GEIZMO platform is currently undergoing scheduled maintenance.
 
 {message}
 
@@ -57,7 +57,7 @@ During this time you will not be able to access the platform. We apologise for a
 
 Thank you for your patience.
 
-— The GIZMO Team
+— The GEIZMO Team
 """
     send_mail(
         subject,
@@ -69,15 +69,15 @@ Thank you for your patience.
 
 
 def send_maintenance_over_email(to_email, first_name=''):
-    subject = '✅ GIZMO is Back Online'
+    subject = '✅ GEIZMO is Back Online'
     body = f"""Hi {first_name},
 
-Great news — the GIZMO platform is back online and fully operational.
+Great news — the GEIZMO platform is back online and fully operational.
 
 You can sign in at:
 http://127.0.0.1:8000/
 
-— The GIZMO Team
+— The GEIZMO Team
 """
     send_mail(
         subject,
